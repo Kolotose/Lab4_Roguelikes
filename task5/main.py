@@ -1,3 +1,4 @@
+import sys
 import game
 
 kitchen = game.Room("Kitchen")
@@ -91,5 +92,16 @@ while dead == False:
             current_room.set_item(None)
         else:
             print("There's nothing here to take!")
+    elif command == "backpack":
+        if backpack:
+            backpack_str = ''
+            for item in backpack:
+                backpack_str += item + ', '
+            print(f"You have [{backpack_str.strip(' ,')}] in your backpack")
+        else:
+            print('You have no items in your backpack')
+    elif command == "exit":
+        print('Bye!')
+        sys.exit()
     else:
         print("I don't know how to " + command)

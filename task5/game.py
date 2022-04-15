@@ -3,7 +3,7 @@ Module with objects for game
 """
 
 class Room:
-    def __init__(self, room_name):
+    def __init__(self, room_name: str) -> None:
         self.name = room_name
         self.description = None
         self.connections = {}
@@ -20,19 +20,19 @@ class Room:
         """
         Connects two rooms
         To the self.connections adds c_room
-        To the c_room.connections adds self
+        # To the c_room.connections adds self
         """
-        if side == 'north':
-            opposite = 'south'
-        elif side == 'south':
-            opposite = 'north'
-        elif side == 'east':
-            opposite = 'west'
-        else:
-            opposite = 'east'
+        # if side == 'north':
+        #     opposite = 'south'
+        # elif side == 'south':
+        #     opposite = 'north'
+        # elif side == 'east':
+        #     opposite = 'west'
+        # else:
+        #     opposite = 'east'
 
         self.connections[side] = c_room
-        c_room.connections[opposite] = self
+        # c_room.connections[opposite] = self
 
     def get_details(self) -> None:
         """
@@ -45,9 +45,9 @@ class Room:
             print(self.description)
 
         for side in self.connections:
-            print(f'The {self.connections[side]} is {side}')
+            print(f'The {self.connections[side].name} is {side}')
 
-    def set_character(self, entity):
+    def set_character(self, entity: object) -> None:
         """
         Adds entity to the room
         """
@@ -59,7 +59,7 @@ class Room:
         """
         return self.character
 
-    def set_item(self, item):
+    def set_item(self, item: object) -> None:
         """
         Sets the item of the room
         """
@@ -70,6 +70,15 @@ class Room:
         Returns the item of the room
         """
         return self.item
+
+    def move(self, side: str) -> object:
+        """
+        Returns the room that is connected on dte side
+        """
+        try:
+            return self.connections[side]
+        except KeyError:
+            return self
 
 
 class Enemy:
@@ -91,6 +100,20 @@ class Enemy:
         """
         self.weakness = object_name
 
+    def describe(self) -> None:
+        """
+        Prints the name and the description of an entity
+        """
+        print(f'{self.name} is here')
+        print(self.description)
+
+    def talk(self) -> None:
+        """
+        Prints the conversation
+        """
+        print(f'[{self.name} says]:', end=' ')
+        print(self.conversation)
+
 
 class Item:
     def __init__(self, item_name: str) -> None:
@@ -102,3 +125,16 @@ class Item:
         Sets the description for the item
         """
         self.description = item_description
+
+    def get_name(self) -> str:
+        """
+        Returns the name of the item
+        """
+        return self.name
+
+    def describe(self) -> print:
+        """
+        Prints the description of the item
+        """
+        print(f'The {self.name} is here', end=' — ')
+        print(self.description)
