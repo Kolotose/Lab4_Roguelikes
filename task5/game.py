@@ -8,7 +8,7 @@ class Room:
         self.description = None
         self.connections = {}
         self.character = None
-        self.object = None
+        self.item = None
 
     def set_description(self, description: None) -> None:
         """
@@ -34,11 +34,42 @@ class Room:
         self.connections[side] = c_room
         c_room.connections[opposite] = self
 
+    def get_details(self) -> None:
+        """
+        Prints the details of the current room
+        """
+        print(self.name)
+        print('—'*15)
+
+        if self.description:
+            print(self.description)
+
+        for side in self.connections:
+            print(f'The {self.connections[side]} is {side}')
+
     def set_character(self, entity):
         """
         Adds entity to the room
         """
         self.character = entity
+
+    def get_character(self) -> object:
+        """
+        Returns the character in room
+        """
+        return self.character
+
+    def set_item(self, item):
+        """
+        Sets the item of the room
+        """
+        self.item = item
+
+    def get_item(self) -> object:
+        """
+        Returns the item of the room
+        """
+        return self.item
 
 
 class Enemy:
@@ -59,3 +90,15 @@ class Enemy:
         Sets the weakness of entity
         """
         self.weakness = object_name
+
+
+class Item:
+    def __init__(self, item_name: str) -> None:
+        self.name = item_name
+        self.description = None
+
+    def set_description(self, item_description: str) -> None:
+        """
+        Sets the description for the item
+        """
+        self.description = item_description
