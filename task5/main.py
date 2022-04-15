@@ -63,6 +63,10 @@ while dead == False:
     elif command == "fight":
         if inhabitant is not None:
             # Fight with the inhabitant, if there is one
+            backpack_str = ''
+            for item in backpack:
+                backpack_str += item + ', '
+            print(f"You have [{backpack_str.strip(' ,')}] in your backpack")
             print("What will you fight with?")
             fight_with = input()
 

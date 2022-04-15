@@ -2,6 +2,7 @@
 Module with objects for game
 """
 
+
 class Room:
     def __init__(self, room_name: str) -> None:
         self.name = room_name
@@ -82,6 +83,8 @@ class Room:
 
 
 class Enemy:
+    defeated = 0
+
     def __init__(self, enemy_name: str, description: str) -> None:
         self.name = enemy_name
         self.description = description
@@ -107,12 +110,30 @@ class Enemy:
         print(f'{self.name} is here')
         print(self.description)
 
+    def get_defeated(self) -> int:
+        """
+        Returns the amount of defeated enemies
+        """
+        return Enemy.defeated
+
     def talk(self) -> None:
         """
         Prints the conversation
         """
         print(f'[{self.name} says]:', end=' ')
         print(self.conversation)
+
+    def fight(self, item: str) -> bool:
+        """
+        The process of fight
+        If the item is the same as the weakness
+        returns True, else False
+        """
+        if item == self.weakness:
+            Enemy.defeated += 1
+            return True
+        else:
+            return False
 
 
 class Item:
