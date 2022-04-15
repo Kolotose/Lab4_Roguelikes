@@ -7,8 +7,8 @@ class Room:
         self.name = room_name
         self.description = None
         self.connections = {}
-        self.entities = None
-        self.objects = None
+        self.character = None
+        self.object = None
 
     def set_description(self, description: None) -> None:
         """
@@ -38,6 +38,7 @@ class Room:
         """
         Adds entity to the room
         """
+        self.character = entity
 
 
 class Enemy:
@@ -46,3 +47,15 @@ class Enemy:
         self.description = description
         self.conversation = None
         self.weaknes = None
+
+    def set_conversation(self, conversation: str) -> None:
+        """
+        Sets the conversation line for entity
+        """
+        self.conversation = conversation
+
+    def set_weakness(self, object_name: str) -> None:
+        """
+        Sets the weakness of entity
+        """
+        self.weakness = object_name
