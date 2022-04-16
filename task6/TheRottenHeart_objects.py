@@ -84,3 +84,66 @@ class Location:
             return self._connections[side]
         except KeyError:
             return self
+
+class Entity:
+    """
+    Class that represents an entity
+    On creation takes 1 atribute:
+    entity_name
+    """
+    # Entity.defeated = 0
+    def __init__(self, entity_name: str) -> None:
+        self._name = entity_name
+        self._description = None
+        # self._conversation = None
+        # self._weaknes = None
+
+    def set_description(self, entity_description: str) -> None:
+        """
+        Sets the description for entity
+        """
+        self._description = entity_description
+
+    def set_conversation(self, conversation: str) -> None:
+        """
+        Sets the conversation line for entity
+        """
+        self._conversation = conversation
+
+    def set_weakness(self, object_name: str) -> None:
+        """
+        Sets the weakness of entity
+        """
+        self._weakness = object_name
+
+    def describe(self) -> None:
+        """
+        Prints the name and the description of an entity
+        """
+        print(f'{self._name} is here')
+        print(self._description)
+
+    # def get_defeated(self) -> int:
+    #     """
+    #     Returns the amount of defeated enemies
+    #     """
+    #     return Enemy.defeated
+
+    def talk(self) -> None:
+        """
+        Prints the conversation
+        """
+        print(f'[{self._name} says]:', end=' ')
+        print(self._conversation)
+
+    # def fight(self, item: str) -> bool:
+    #     """
+    #     The process of fight
+    #     If the item is the same as the weakness
+    #     returns True, else False
+    #     """
+    #     if item == self.weakness:
+    #         Enemy.defeated += 1
+    #         return True
+    #     else:
+    #         return False
