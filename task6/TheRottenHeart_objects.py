@@ -2,6 +2,7 @@
 The classes for the game 'The Rotten Heart'
 """
 
+
 class Location:
     """
     The class that represents the location
@@ -25,19 +26,8 @@ class Location:
         """
         Connects two locations
         To the self.connections adds c_location
-        # To the c_location.connections adds self
         """
-        # if side == 'north':
-        #     opposite = 'south'
-        # elif side == 'south':
-        #     opposite = 'north'
-        # elif side == 'east':
-        #     opposite = 'west'
-        # else:
-        #     opposite = 'east'
-
         self._connections[side] = c_location
-        # c_location._connections[opposite] = self
 
     def get_details(self) -> None:
         """
@@ -85,6 +75,7 @@ class Location:
         except KeyError:
             return self
 
+
 class Entity:
     """
     Class that represents an entity
@@ -95,26 +86,12 @@ class Entity:
     def __init__(self, entity_name: str) -> None:
         self._name = entity_name
         self._description = None
-        # self._conversation = None
-        # self._weaknes = None
 
     def set_description(self, entity_description: str) -> None:
         """
         Sets the description for entity
         """
         self._description = entity_description
-
-    def set_conversation(self, conversation: str) -> None:
-        """
-        Sets the conversation line for entity
-        """
-        self._conversation = conversation
-
-    def set_weakness(self, object_name: str) -> None:
-        """
-        Sets the weakness of entity
-        """
-        self._weakness = object_name
 
     def describe(self) -> None:
         """
@@ -123,12 +100,6 @@ class Entity:
         print(f'{self._name} is here')
         print(self._description)
 
-    # def get_defeated(self) -> int:
-    #     """
-    #     Returns the amount of defeated enemies
-    #     """
-    #     return Enemy.defeated
-
     def talk(self) -> None:
         """
         Prints the conversation
@@ -136,14 +107,137 @@ class Entity:
         print(f'[{self._name} says]:', end=' ')
         print(self._conversation)
 
-    # def fight(self, item: str) -> bool:
+
+class Ally(Entity):
+    """
+    Class that represents an ally
+    On creation takes 1 atribute:
+    ally_name
+    """
+    def __init__(self, ally_name: str) -> None:
+        super().__init__(ally_name)
+        self._conversation = None
+
+    def set_conversation(self, conversation: str) -> None:
+        """
+        Sets the conversation line for entity
+        """
+        self._conversation = conversation
+
+
+class Enemy(Entity):
+    """
+    Class that represents an enemy
+    On creation takes 1 atribute:
+    enemy_name
+    """
+    def __init__(self, entity_name: str) -> None:
+        super().__init__(entity_name)
+        self._weakness = None
+
+    def fight(self, item: str) -> bool:
+        """
+        The process of fight
+        If the item is the same as the weakness
+        returns True, else False
+        """
+        if item == self.weakness:
+            Enemy.defeated += 1
+            return True
+        else:
+            return False
+
+    def set_weakness(self, object_name: str) -> None:
+        """
+        Sets the weakness of entity
+        """
+        self._weakness = object_name
+
+    # def get_defeated(self) -> int:
     #     """
-    #     The process of fight
-    #     If the item is the same as the weakness
-    #     returns True, else False
+    #     Returns the amount of defeated enemies
     #     """
-    #     if item == self.weakness:
-    #         Enemy.defeated += 1
-    #         return True
-    #     else:
-    #         return False
+    #     return Enemy.defeated
+
+
+class Player:
+    """
+    Class that represents player
+    On creation takes 1 atribute:
+    player_name
+    """
+    def __init__(self, player_name) -> None:
+        self._name = player_name
+        self._backpack = []
+        self._alive = True
+
+    def death(self) -> None:
+        """
+        Makes character dead
+        """
+        self._alive = False
+
+    @property
+    def is_alive(self) -> None:
+        """
+        Returns the live state of character
+        """
+        return self._alive
+
+    def get_name(self) -> str:
+        """
+        Returns the name of the player
+        """
+        return self._name
+
+    def take(self, item: object) -> None:
+        """
+        Places item into your backpack
+        """
+        self._backpack.append(item)
+
+    def get_items_in_backpack(self) -> list:
+        """
+        Returns the list of items in backpack
+        """
+        return self._backpack
+
+    @property
+    def backpack_string(self) -> str:
+        """
+        The string representation of backpack
+        """
+        result_string = ''
+        for item in self._backpack:
+            result_string += item + ', '
+        return result_string.strip(', ')
+
+
+class Item:
+    """
+    Class that represents an item
+    On creation takes 1 atribute:
+    item_name
+    """
+    def __init__(self, item_name: str) -> None:
+        self._name = item_name
+        self._description = None
+
+    def set_description(self, item_description: str) -> None:
+        """
+        Sets the description for the item
+        """
+        self._description = item_description
+
+    def get_name(self) -> str:
+        """
+        Returns the name of the item
+        """
+        return self._name
+
+    def describe(self) -> print:
+        """
+        Prints the description of the item
+        """
+        print(f'The {self._name} is here', end=' — ')
+        print(self._description)
