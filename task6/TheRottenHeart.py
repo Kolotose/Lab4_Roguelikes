@@ -3,7 +3,6 @@ The main code of the game 'The Rotten Heart'
 """
 
 import TheRottenHeart_objects as objects
-import time
 import sys
 
 
@@ -72,7 +71,7 @@ player = objects.Player(player_name)
 current_location = town_hall_entrance
 
 # Game cycle
-while player.is_alive:
+while player.is_alive():
 
     print("\n")
     current_location.get_details()
