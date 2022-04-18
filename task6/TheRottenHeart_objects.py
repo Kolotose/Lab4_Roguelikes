@@ -18,7 +18,7 @@ class Location:
         self._description = None
         self._connections = {}
         self._entity = None
-        self._item = None
+        self._items = []
 
     def set_description(self, description: str) -> None:
         """
@@ -32,6 +32,12 @@ class Location:
         To the self.connections adds c_location
         """
         self._connections[side] = c_location
+
+    def get_connections(self) -> dict:
+        """
+        Returns the connections of the lication
+        """
+        return self._connections
 
     def get_details(self) -> None:
         """
@@ -58,17 +64,25 @@ class Location:
         """
         return self._entity
 
-    def set_item(self, item: object) -> None:
+    def add_item(self, item: object) -> None:
         """
-        Sets the item of the location
+        adds the item of the location
         """
-        self._item = item
+        self._items.append(item)
 
-    def get_item(self) -> object:
+    def remove_item(self):
+        """
+        Removes first item from the items list
+        """
+        del self._items[0]
+
+    def get_items(self) -> object:
         """
         Returns the item of the location
         """
-        return self._item
+        return self._items
+
+
 
     def move(self, side: str) -> object:
         """
@@ -88,9 +102,17 @@ class Entity:
     entity_name
     """
     # Entity.defeated = 0
-    def __init__(self, entity_name: str) -> None:
+    def __init__(self, entity_name: str, entity_type = None) -> None:
         self._name = entity_name
         self._description = None
+        self._type = entity_type
+        self._items = []
+
+    def get_name(self) -> str:
+        """
+        Returns the name of the entity
+        """
+        return self._name
 
     def set_description(self, entity_description: str) -> None:
         """
@@ -102,15 +124,14 @@ class Entity:
         """
         Prints the name and the description of an entity
         """
-        print(f'{self._name} is here')
+        print(f'Тут є {self._type} {self._name}')
         print(self._description)
 
-    def talk(self) -> None:
+    def add_item(self, item: object) -> None:
         """
-        Prints the conversation
+        Adds item to the ally inventory
         """
-        print(f'[{self._name} says]:', end=' ')
-        print(self._conversation)
+        self._items.append(item)
 
 
 class Ally(Entity):
@@ -120,7 +141,7 @@ class Ally(Entity):
     ally_name
     """
     def __init__(self, ally_name: str) -> None:
-        super().__init__(ally_name)
+        super().__init__(ally_name, 'союзник')
         self._conversation = None
 
     def set_conversation(self, conversation: str) -> None:
@@ -128,6 +149,13 @@ class Ally(Entity):
         Sets the conversation line for entity
         """
         self._conversation = conversation
+
+    def talk(self) -> None:
+        """
+        Prints the conversation
+        """
+        print(f'[{self._name}]:', end=' ')
+        print(self._conversation)
 
 
 class Enemy(Entity):
@@ -137,12 +165,12 @@ class Enemy(Entity):
     enemy_name
     """
     def __init__(self, entity_name: str, health = 1) -> None:
-        super().__init__(entity_name)
+        super().__init__(entity_name, 'ворог')
         self._weakness = None
         self._health = health
         self._alive = True
 
-    def fight(self, item: str) -> bool:
+    def fight(self) -> bool:
         """
         The process of battle
         If the item is the same as the weakness
@@ -163,7 +191,7 @@ class Enemy(Entity):
 
         difference_time = end_time - start_time
 
-        if difference_time <= 0.4:
+        if difference_time <= 0.375:
             sys.stdout.write("\033[F")
             print('ˉ - 0===[=========>', end='\r')
             time.sleep(0.05)
@@ -186,11 +214,23 @@ class Enemy(Entity):
 
             return False
 
-    def set_weakness(self, object_name: str) -> None:
+    def set_weakness(self, item: object) -> None:
         """
         Sets the weakness of entity
         """
-        self._weakness = object_name
+        self._weakness = item
+
+    def get_weakness(self) -> str:
+        """
+        Returns the weakness of the enemy
+        """
+        return self._weakness
+
+    def get_alive(self) -> bool:
+        """
+        Returns if the enemy is alive
+        """
+        return self._alive
 
     # def get_defeated(self) -> int:
     #     """
@@ -205,8 +245,7 @@ class Player:
     On creation takes 1 atribute:
     player_name
     """
-    def __init__(self, player_name) -> None:
-        self._name = player_name
+    def __init__(self) -> None:
         self._backpack = []
         self._alive = True
 
@@ -240,14 +279,19 @@ class Player:
         """
         return self._backpack
 
-    @property
+    def use_item(self, item: str) -> None:
+        """
+        Uses (removes) item in backpack
+        """
+        self._backpack.remove(item)
+
     def backpack_string(self) -> str:
         """
         The string representation of backpack
         """
         result_string = ''
         for item in self._backpack:
-            result_string += item + ', '
+            result_string += item._name + ', '
         return result_string.strip(', ')
 
 
