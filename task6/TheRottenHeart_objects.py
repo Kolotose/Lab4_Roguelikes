@@ -5,6 +5,7 @@ The classes for the game 'The Rotten Heart'
 
 from random import uniform
 import time, sys
+from typing import List, Dict
 
 
 class Location:
@@ -18,7 +19,7 @@ class Location:
         self._description = None
         self._connections = {}
         self._entity = None
-        self._items = []
+        self._item = None
 
     def set_description(self, description: str) -> None:
         """
@@ -26,12 +27,12 @@ class Location:
         """
         self._description = description
 
-    def link_location(self, c_location: object, side: str) -> None:
+    def link_location(self, location: object, side: str) -> None:
         """
         Connects two locations
-        To the self.connections adds c_location
+        To the self.connections adds location
         """
-        self._connections[side] = c_location
+        self._connections[side] = location
 
     def get_connections(self) -> dict:
         """
@@ -39,18 +40,26 @@ class Location:
         """
         return self._connections
 
+    def unlink_location(self, side: str) -> None:
+        """
+        Unlinks the location on the given side
+        Removes the key=side
+        """
+        del self._connections[side]
+
     def get_details(self) -> None:
         """
         Prints the details of the current location
         """
         print(self._name)
-        print('—'*15)
+        print('—'*20)
 
         if self._description:
-            print(self._description)
+            print(self._description + '\n')
 
         for side in self._connections:
             print(f'На {side} — {self._connections[side]._name}')
+        print()
 
     def set_entity(self, entity: object) -> None:
         """
@@ -64,25 +73,23 @@ class Location:
         """
         return self._entity
 
-    def add_item(self, item: object) -> None:
+    def set_item(self, item: object) -> None:
         """
-        adds the item of the location
+        Sets the item of the location
         """
-        self._items.append(item)
+        self._item = item
 
     def remove_item(self):
         """
         Removes first item from the items list
         """
-        del self._items[0]
+        self._item = None
 
-    def get_items(self) -> object:
+    def get_item(self) -> object:
         """
         Returns the item of the location
         """
-        return self._items
-
-
+        return self._item
 
     def move(self, side: str) -> object:
         """
@@ -114,7 +121,7 @@ class Entity:
         """
         return self._name
 
-    def set_description(self, entity_description: str) -> None:
+    def set_description(self, entity_description: str, version = 0) -> None:
         """
         Sets the description for entity
         """
@@ -133,6 +140,12 @@ class Entity:
         """
         self._items.append(item)
 
+    def take_item(self) -> object:
+        """
+        Pops first item from ._items list
+        """
+        return self._items.pop(0)
+
 
 class Ally(Entity):
     """
@@ -143,19 +156,34 @@ class Ally(Entity):
     def __init__(self, ally_name: str) -> None:
         super().__init__(ally_name, 'союзник')
         self._conversation = None
+        self._reputation = 0
 
-    def set_conversation(self, conversation: str) -> None:
+    def set_conversations(self, conversations: dict) -> None:
         """
         Sets the conversation line for entity
         """
-        self._conversation = conversation
+        self._conversation = conversations
 
-    def talk(self) -> None:
+    def talk(self, player) -> None:
         """
         Prints the conversation
         """
         print(f'[{self._name}]:', end=' ')
         print(self._conversation)
+
+    def get_reputation(self) -> int:
+        """
+        Returns the reputation of player in
+        this character
+        """
+        return self._reputation
+
+    def increace_reputation(self) -> None:
+        """
+        Increaces the reptation of player in
+        this character
+        """
+        self._reputation += 1
 
 
 class Enemy(Entity):
@@ -191,7 +219,7 @@ class Enemy(Entity):
 
         difference_time = end_time - start_time
 
-        if difference_time <= 0.375:
+        if difference_time <= 0.4:
             sys.stdout.write("\033[F")
             print('ˉ - 0===[=========>', end='\r')
             time.sleep(0.05)
@@ -200,6 +228,7 @@ class Enemy(Entity):
             print('- _ ˉ - 0===[=========>')
             time.sleep(1)
             print('* успіх *')
+            print(difference_time)
             return True
 
         else:
@@ -211,7 +240,7 @@ class Enemy(Entity):
             print('0===[=/     /======>')
             time.sleep(1)
             print('* провал *')
-
+            print(difference_time)
             return False
 
     def set_weakness(self, item: object) -> None:
@@ -242,8 +271,12 @@ class Enemy(Entity):
 class Player:
     """
     Class that represents player
-    On creation takes 1 atribute:
-    player_name
+
+    has following attributes:
+    backpack: list — backpack with items
+    alive: bool — the indicator of characters aliveness
+    reputation — used to progress through the story
+    during dialogues
     """
     def __init__(self) -> None:
         self._backpack = []
@@ -260,12 +293,6 @@ class Player:
         Returns the live state of character
         """
         return self._alive
-
-    def get_name(self) -> str:
-        """
-        Returns the name of the player
-        """
-        return self._name
 
     def take(self, item: object) -> None:
         """
@@ -321,5 +348,5 @@ class Item:
         """
         Prints the description of the item
         """
-        print(f'The {self._name} is here', end=' — ')
+        print(f'Тут є предмет [{self._name}]', end=' — ')
         print(self._description)
