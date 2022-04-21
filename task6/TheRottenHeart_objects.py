@@ -164,12 +164,12 @@ class Ally(Entity):
         """
         self._conversation = conversations
 
-    def talk(self, player) -> None:
-        """
-        Prints the conversation
-        """
-        print(f'[{self._name}]:', end=' ')
-        print(self._conversation)
+    # def talk(self, player) -> None:
+    #     """
+    #     Prints the conversation
+    #     """
+    #     print(f'[{self._name}]:', end=' ')
+    #     print(self._conversation)
 
     def get_reputation(self) -> int:
         """
@@ -192,10 +192,9 @@ class Enemy(Entity):
     On creation takes 1 atribute:
     enemy_name
     """
-    def __init__(self, entity_name: str, health = 1) -> None:
+    def __init__(self, entity_name: str) -> None:
         super().__init__(entity_name, 'ворог')
         self._weakness = None
-        self._health = health
         self._alive = True
 
     def fight(self) -> bool:
@@ -206,9 +205,9 @@ class Enemy(Entity):
         """
         time_for_hit = round(uniform(1, 4), 1)
 
-        print('————— Бій —————\n')
+        print('————— Бій —————')
         time.sleep(1)
-        print('ГОТУЙСЯ')
+        print('ГОТУЙСЯ', end='\n\n')
         time.sleep(time_for_hit)
 
         # Time challenge
@@ -228,7 +227,6 @@ class Enemy(Entity):
             print('- _ ˉ - 0===[=========>')
             time.sleep(1)
             print('* успіх *')
-            print(difference_time)
             return True
 
         else:
@@ -240,7 +238,6 @@ class Enemy(Entity):
             print('0===[=/     /======>')
             time.sleep(1)
             print('* провал *')
-            print(difference_time)
             return False
 
     def set_weakness(self, item: object) -> None:
@@ -261,11 +258,53 @@ class Enemy(Entity):
         """
         return self._alive
 
-    # def get_defeated(self) -> int:
-    #     """
-    #     Returns the amount of defeated enemies
-    #     """
-    #     return Enemy.defeated
+
+class SpecialAlly(Ally):
+    def __init__(self, ally_name: str) -> None:
+        super().__init__(ally_name)
+
+    def fight(self) -> bool:
+        """
+        The process of battle
+        If the item is the same as the weakness
+        returns True, else False
+        """
+        time_for_hit = round(uniform(1, 4), 1)
+
+        print('————— Бій —————')
+        time.sleep(1)
+        print('ГОТУЙСЯ', end='\n\n')
+        time.sleep(time_for_hit)
+
+        # Time challenge
+        print('0===[=========>', end='')
+        start_time = time.time()
+        input() #player presses 'enter'
+        end_time = time.time()
+
+        difference_time = end_time - start_time
+
+        if difference_time <= 0.4:
+            sys.stdout.write("\033[F")
+            print('ˉ - 0===[=========>', end='\r')
+            time.sleep(0.05)
+            print('_ ˉ - 0===[=========>', end='\r')
+            time.sleep(0.05)
+            print('- _ ˉ - 0===[=========>')
+            time.sleep(1)
+            print('* успіх *')
+            return True
+
+        else:
+            sys.stdout.write("\033[F")
+            print('0===[=/ /======>', end='\r')
+            time.sleep(0.05)
+            print('0===[=/   /======>', end='\r')
+            time.sleep(0.05)
+            print('0===[=/     /======>')
+            time.sleep(1)
+            print('* провал *')
+            return False
 
 
 class Player:
@@ -294,7 +333,7 @@ class Player:
         """
         return self._alive
 
-    def take(self, item: object) -> None:
+    def take(self, item) -> None:
         """
         Places item into your backpack
         """
@@ -306,7 +345,7 @@ class Player:
         """
         return self._backpack
 
-    def use_item(self, item: str) -> None:
+    def use_item(self, item: object) -> None:
         """
         Uses (removes) item in backpack
         """

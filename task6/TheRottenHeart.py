@@ -7,6 +7,99 @@ import TheRottenHeart_objects as objects
 import sys
 
 
+commands_help = """[що?, шо?, поможіт] — всі команди
+[північ, південь, захід, схід] — переміщення
+[говорити, поговорити, побалакати] — поговорити зі статуєю
+[битися, бій, битва] — битва з ворогом
+[взяти] — взяти предмет в інвентар
+[наплічник, інвентар] — переглянути предмети в наплічнику
+[вихід, вийти] — вийти з гри"""
+
+
+def talk(ally: objects.Ally, player: objects.Player):
+    """
+    ALL OF THE DIALOGUES with every character are
+    in this function, because i really didn`t come up
+    with the better way to do the thing i want to do
+    """
+    print(ally.get_name(), ally.get_reputation())
+    if ally == neptune:
+        if ally.get_reputation() == 0:
+            print("[Нептун]: Іди геть! Я в поганому настрої.")
+            ally.increace_reputation()
+
+        elif ally.get_reputation() == 1:
+            if bandura in player.get_items_in_backpack() and\
+               duma in player.get_items_in_backpack():
+                print("*Ти граєш на бандурі, проговорюючи речитативом нещодавно знайдену думу*")
+                print("[Нептун]:")
+                print("replica")
+
+                ally.increace_reputation()
+                prize = ally.take_item()
+                player.take(prize)
+            else:
+                print("[Нептун]: Я тобі ще раз повторюю! Іди геть!")
+
+        elif ally.get_reputation() == 2:
+            if ocean_tear in player.get_items_in_backpack():
+                print("[Нептун]:")
+
+                ally.increace_reputation()
+                player.use_item(ocean_tear)
+                prize = ally.take_item()
+                player.take(prize)
+
+        else:
+            print("[Нептун]: Наступного разу, подарую їй намисто з цієї сльози.")
+
+    elif ally == amphitrite:
+        if ally.get_reputation() == 0:
+            print("[Амфітріта]:")
+
+        if the_gift in player.get_items_in_backpack():
+            print("Амфітріта]:")
+
+            ally.increace_reputation()
+            player.use_item(the_gift)
+            prize = ally.take_item()
+            player.take(prize)
+
+        if ally.get_reputation() == 1:
+            print("[Амфітріта]:")
+
+    elif ally == adonis:
+        if ally.get_reputation() == 0:
+            print("[Адоніс]:")
+
+        if divine_waters in player.get_items_in_backpack():
+            print("[Адоніс]:")
+
+            ally.increace_reputation()
+            player.use_item(divine_waters)
+            prize = ally.take_item()
+            player.take(prize)
+
+    elif ally == asclepius:
+        if ally.get_reputation() == 0:
+            print("[Асклепій]:")
+            print("[Гігея]:")
+
+        if anemone in player.get_items_in_backpack() and\
+           flask in player.get_items_in_backpack():
+            print("[Асклепій]:")
+            print("[Гігея]:")
+
+            ally.increace_reputation()
+            player.use_item(anemone)
+            player.use_item(flask)
+            prize = ally.take_item()
+            player.take(prize)
+
+    elif ally == diana:
+        pass
+
+
 # Initiating items
 bandura = objects.Item("Бандура")
 bandura.set_description("")
@@ -34,7 +127,7 @@ neptune.set_description("")
 neptune.add_item(the_gift)
 neptune.add_item(divine_waters)
 
-diana = objects.Ally("Діана")
+diana = objects.SpecialAlly("Діана")
 diana.set_description("")
 diana.add_item(bow_and_arrows)
 
@@ -80,14 +173,15 @@ fountain_neptune.set_entity(neptune)
 
 fountain_amphitrite = objects.Location("Фонтан з Амфітрітою")
 fountain_amphitrite.set_description("")
-fountain_neptune.set_entity(neptune)
+fountain_amphitrite.set_entity(amphitrite)
 
 fountain_diana = objects.Location("Фонтан з Діаною")
 fountain_diana.set_description("")
-fountain_neptune.set_entity(neptune)
+fountain_diana.set_entity(diana)
 
 fountain_adonis = objects.Location("Фонтан з Адонісом")
 fountain_adonis.set_description("")
+fountain_adonis.set_entity(adonis)
 
 monument_shevchenko = objects.Location("Пам'ятник Шевченку")
 monument_shevchenko.set_description("")
@@ -97,7 +191,7 @@ monument_shevchenko.set_entity(ancestors)
 apothecary = objects.Location("Аптека «Під Чорним Орлом»")
 apothecary.set_description("")
 apothecary.set_item(flask)
-apothecary.set_entity(None)
+apothecary.set_entity(asclepius)
 
 town_hall = objects.Location("Ратуша")
 town_hall.set_description("")
@@ -164,11 +258,13 @@ while player.is_alive():
         # Move in the given direction
         current_location = current_location.move(command)
 
-    elif command == "поговорити":
+    elif command == "поговорити" or\
+         command == "побалакати" or\
+         command == "говорити":
         # Talk to the entity - check whether there is one!
         if entity is not None and\
            isinstance(entity, objects.Ally):
-            entity.talk(player)
+            talk(entity, player)
 
     elif command == "битися" or\
          command == "бій" or\
@@ -178,7 +274,8 @@ while player.is_alive():
             # Fight with the entity, if there is one
             if entity.get_weakness() == None or\
                entity.get_weakness() in player.get_items_in_backpack():
-                print(f"Ти використовуєш [{entity.get_weakness()}] для битви")
+                if entity.get_weakness() != None:
+                    print(f"Ти використовуєш [{entity.get_weakness()}] для битви")
                 if entity.fight() == True:
                     # What happens if you win?
                     print("Ти переміг " + entity.get_name())
@@ -201,7 +298,6 @@ while player.is_alive():
 
     elif command == "взяти":
         if item is not None:
-            print(f"Ти поклав [{item.get_name()}] у свій наплічник")
             player.take(item)
             current_location.remove_item()
         else:
@@ -218,6 +314,11 @@ while player.is_alive():
          command == "вийти":
         print('Бувай!')
         sys.exit()
+
+    elif command.lower() == "шо?" or\
+         command.lower() == "що?" or\
+         command.lower() == "поможіт":
+        print(commands_help)
 
     else:
         print("Неможливо виконати " + command)
