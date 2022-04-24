@@ -132,7 +132,7 @@ class Entity:
         Prints the name and the description of an entity
         """
         print(f'Тут є {self._type} {self._name}')
-        print(self._description)
+        print(self._description, '\n')
 
     def add_item(self, item: object) -> None:
         """
@@ -144,7 +144,10 @@ class Entity:
         """
         Pops first item from ._items list
         """
-        return self._items.pop(0)
+        if self._items:
+            return self._items.pop(0)
+        else:
+            return None
 
 
 class Ally(Entity):
@@ -158,11 +161,11 @@ class Ally(Entity):
         self._conversation = None
         self._reputation = 0
 
-    def set_conversations(self, conversations: dict) -> None:
-        """
-        Sets the conversation line for entity
-        """
-        self._conversation = conversations
+    # def set_conversations(self, conversations: dict) -> None:
+    #     """
+    #     Sets the conversation line for entity
+    #     """
+    #     self._conversation = conversations
 
     # def talk(self, player) -> None:
     #     """
@@ -205,7 +208,7 @@ class Enemy(Entity):
         """
         time_for_hit = round(uniform(1, 4), 1)
 
-        print('————— Бій —————')
+        print('\n————— Бій —————')
         time.sleep(1)
         print('ГОТУЙСЯ', end='\n\n')
         time.sleep(time_for_hit)
@@ -226,7 +229,9 @@ class Enemy(Entity):
             time.sleep(0.05)
             print('- _ ˉ - 0===[=========>')
             time.sleep(1)
-            print('* успіх *')
+            print('* успіх *\n')
+            self._alive = False
+
             return True
 
         else:
@@ -237,7 +242,7 @@ class Enemy(Entity):
             time.sleep(0.05)
             print('0===[=/     /======>')
             time.sleep(1)
-            print('* провал *')
+            print('* провал *\n\n')
             return False
 
     def set_weakness(self, item: object) -> None:
@@ -271,7 +276,7 @@ class SpecialAlly(Ally):
         """
         time_for_hit = round(uniform(1, 4), 1)
 
-        print('————— Бій —————')
+        print('\n————— Бій —————')
         time.sleep(1)
         print('ГОТУЙСЯ', end='\n\n')
         time.sleep(time_for_hit)
@@ -292,7 +297,7 @@ class SpecialAlly(Ally):
             time.sleep(0.05)
             print('- _ ˉ - 0===[=========>')
             time.sleep(1)
-            print('* успіх *')
+            print('* успіх *\n')
             return True
 
         else:
@@ -303,7 +308,7 @@ class SpecialAlly(Ally):
             time.sleep(0.05)
             print('0===[=/     /======>')
             time.sleep(1)
-            print('* провал *')
+            print('* провал *\n')
             return False
 
 
@@ -337,6 +342,7 @@ class Player:
         """
         Places item into your backpack
         """
+        print(f"\n[{item.get_name()}] додано у наплічник.")
         self._backpack.append(item)
 
     def get_items_in_backpack(self) -> list:
